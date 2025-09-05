@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { Link } from "lucide-react";
 
 const RegisterDamage = () => {
   const [formData, setFormData] = useState({
@@ -15,15 +14,16 @@ const RegisterDamage = () => {
     description: "",
     discount: [10],
     category: "",
-    linkedProduct: ""
+    linkedProduct: "",
+    price: "" // Adicionado o campo de preço
   });
-  
+
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Form validation
+
+    // Validação do formulário
     if (!formData.productCode || !formData.description) {
       toast({
         title: "Erro",
@@ -33,21 +33,27 @@ const RegisterDamage = () => {
       return;
     }
 
-    // Simulate API call
+    // Simulação de chamada de API
     toast({
       title: "Sucesso!",
       description: "Avaria registrada com sucesso",
     });
 
-    // Reset form
+    // Reset do formulário
     setFormData({
       productCode: "",
       description: "",
       discount: [10],
       category: "",
-      linkedProduct: ""
+      linkedProduct: "",
+      price: ""
     });
   };
+
+  // Cálculo do preço com desconto
+  const originalPrice = parseFloat(formData.price) || 0;
+  const discountPercentage = formData.discount[0] / 100;
+  const discountedPrice = originalPrice * (1 - discountPercentage);
 
   return (
     <div className="space-y-6">
@@ -67,7 +73,7 @@ const RegisterDamage = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Product Code */}
+            {/* Código do Produto */}
             <div className="space-y-2">
               <Label htmlFor="productCode">Código do Produto *</Label>
               <Input
@@ -79,7 +85,19 @@ const RegisterDamage = () => {
               />
             </div>
 
-            {/* Category */}
+            {/* Preço do Produto */}
+            <div className="space-y-2">
+              <Label htmlFor="price">Preço Original (R$)</Label>
+              <Input
+                id="price"
+                type="number"
+                placeholder="Ex: 150.00"
+                value={formData.price}
+                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              />
+            </div>
+
+            {/* Categoria */}
             <div className="space-y-2">
               <Label htmlFor="category">Categoria</Label>
               <Select onValueChange={(value) => setFormData({ ...formData, category: value })}>
@@ -94,7 +112,7 @@ const RegisterDamage = () => {
               </Select>
             </div>
 
-            {/* Description */}
+            {/* Descrição da Avaria */}
             <div className="space-y-2">
               <Label htmlFor="description">Descrição da Avaria *</Label>
               <Textarea
@@ -107,7 +125,7 @@ const RegisterDamage = () => {
               />
             </div>
 
-            {/* Discount Percentage */}
+            {/* Porcentagem de Desconto */}
             <div className="space-y-4">
               <Label htmlFor="discount">Percentual de Desconto: {formData.discount[0]}%</Label>
               <Slider
@@ -125,7 +143,18 @@ const RegisterDamage = () => {
                 <span>50%</span>
               </div>
             </div>
-            {/* Submit Button */}
+
+            {/* Exibição dos Preços */}
+            <div className="mt-4">
+              <p className="text-sm">
+                Preço original: <span className="line-through">R$ {originalPrice.toFixed(2)}</span>
+              </p>
+              <p className="text-lg font-semibold text-green-600">
+                Preço com desconto: R$ {discountedPrice.toFixed(2)}
+              </p>
+            </div>
+
+            {/* Botão de Envio */}
             <div className="pt-4">
               <Button type="submit" className="bg-accent hover:bg-accent-hover text-accent-foreground">
                 Registrar Avaria
