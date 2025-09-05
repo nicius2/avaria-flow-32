@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design System for Product Damage Control System
+   Primary colors: Deep Blue (#1A237E), Medium Blue (#2196F3), Red Accent (#F44336)
+   All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Background System */
+    --background: 240 23% 97%;
+    --foreground: 240 100% 15%;
+
+    /* Card System */
+    --card: 0 0% 100%;
+    --card-foreground: 240 100% 15%;
+
+    /* Popover System */
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 100% 15%;
+
+    /* Primary System - Deep Blue (#1A237E) */
+    --primary: 240 81% 31%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 240 75% 36%;
+
+    /* Secondary System - Medium Blue (#2196F3) */
+    --secondary: 207 90% 54%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 207 85% 60%;
+
+    /* Accent System - Red (#F44336) */
+    --accent: 4 90% 58%;
+    --accent-foreground: 0 0% 100%;
+    --accent-hover: 4 85% 64%;
+
+    /* Muted System */
+    --muted: 240 5% 95%;
+    --muted-foreground: 240 4% 46%;
+
+    /* Destructive System */
+    --destructive: 4 90% 58%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Border System */
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 240 81% 31%;
+
+    /* Navigation */
+    --nav-background: 240 81% 31%;
+    --nav-foreground: 0 0% 100%;
+    --nav-muted: 240 50% 25%;
+
+    /* Success */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+
+    /* Warning */
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+
+    /* Sidebar System */
+    --sidebar-background: 240 81% 31%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 0 0% 100%;
+    --sidebar-primary-foreground: 240 81% 31%;
+    --sidebar-accent: 240 75% 36%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 50% 40%;
+    --sidebar-ring: 207 90% 54%;
+
+    /* Radius */
+    --radius: 0.75rem;
+
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    /* Background System */
+    --background: 240 100% 8%;
+    --foreground: 0 0% 95%;
+
+    /* Card System */
+    --card: 240 50% 12%;
+    --card-foreground: 0 0% 95%;
+
+    /* Primary System - Keep same but adjust foreground */
+    --primary: 240 81% 31%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 240 75% 36%;
+
+    /* Secondary System */
+    --secondary: 207 90% 54%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 207 85% 60%;
+
+    /* Rest remains similar */
+    --muted: 240 50% 15%;
+    --muted-foreground: 240 15% 65%;
+
+    --border: 240 50% 20%;
+    --input: 240 50% 20%;
+    --ring: 207 90% 54%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom utility classes */
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(240 81% 31%), hsl(240 75% 36%));
+  }
+  
+  .gradient-secondary {
+    background: linear-gradient(135deg, hsl(207 90% 54%), hsl(207 85% 60%));
+  }
+  
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(4 90% 58%), hsl(4 85% 64%));
+  }
+  
+  .shadow-soft {
+    box-shadow: 0 4px 12px hsl(240 81% 31% / 0.08);
+  }
+  
+  .shadow-medium {
+    box-shadow: 0 8px 24px hsl(240 81% 31% / 0.12);
+  }
+  
+  .shadow-strong {
+    box-shadow: 0 16px 40px hsl(240 81% 31% / 0.16);
+  }
+}
