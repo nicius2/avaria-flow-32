@@ -12,9 +12,23 @@ const Login = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Simple validation for demo
-    if (credentials.username && credentials.password) {
+    
+    // Credenciais de admin predefinidas
+    const validCredentials = [
+      { username: "admin", password: "admin123" },
+      { username: "administrador", password: "123456" },
+      { username: "usuario", password: "senha123" }
+    ];
+    
+    // Verifica se as credenciais são válidas
+    const isValidLogin = validCredentials.some(
+      cred => cred.username === credentials.username && cred.password === credentials.password
+    );
+    
+    if (isValidLogin) {
       navigate("/dashboard");
+    } else {
+      alert("Credenciais inválidas. Tente: admin/admin123 ou administrador/123456");
     }
   };
 
