@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo.png";
 
 const Login = () => {
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,9 +28,17 @@ const Login = () => {
     );
     
     if (isValidLogin) {
+      toast({
+        title: "Login realizado com sucesso!",
+        description: "Redirecionando para o dashboard...",
+      });
       navigate("/dashboard");
     } else {
-      alert("Credenciais inválidas. Tente: admin/admin123 ou administrador/123456");
+      toast({
+        title: "Credenciais inválidas",
+        description: "Tente: admin/admin123 ou administrador/123456",
+        variant: "destructive",
+      });
     }
   };
 
@@ -74,6 +84,13 @@ const Login = () => {
               Entrar
             </Button>
           </form>
+          <div className="mt-4 p-3 bg-muted/50 rounded-md">
+            <p className="text-sm text-muted-foreground text-center">
+              <strong>Credenciais para teste:</strong><br />
+              admin / admin123<br />
+              administrador / 123456
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
