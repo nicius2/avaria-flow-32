@@ -13,7 +13,6 @@ const ReportsModal = ({ reports, onClose }: { reports: DamageReport[], onClose: 
     const navigate = useNavigate();
 
     const goToReports = () => {
-        // CORREÇÃO APLICADA AQUI
         navigate('/dashboard/reports');
     };
 
@@ -110,7 +109,6 @@ const Dashboard = () => {
         }
     };
 
-    // CORREÇÃO APLICADA AQUI EM TODAS AS ROTAS
     const statsCards = [
     {
       title: "Produtos Avariados Hoje", value: stats?.damagedToday ?? "...", description: "Novos registos hoje", icon: Package, color: "text-red-500", link: "/dashboard/reports?filtro=hoje"
@@ -195,7 +193,12 @@ const Dashboard = () => {
                     </Button>
                   </Link>
                   <Link to="/dashboard/reports">
-                    <Button size="lg" variant="outline" className="w-full h-full flex flex-col items-center justify-center gap-2 border-primary text-primary hover:bg-primary/5">
+                    {/* CORREÇÃO APLICADA AQUI */}
+                    <Button 
+                        size="lg" 
+                        variant="outline" 
+                        className="w-full h-full flex flex-col items-center justify-center gap-2 border-primary text-primary hover:bg-primary/10 transition-colors duration-200"
+                    >
                       <BarChart3 className="w-6 h-6" />
                       <span className="text-base font-medium">Ver Relatórios</span>
                     </Button>
@@ -233,4 +236,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
