@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Calendar, Download, FileText, Eye, X, Tag, DollarSign, User, Info, Fingerprint, ArrowUpDown, FilterX, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Search } from "lucide-react";
 import { getDamageReports, DamageReport } from "@/services/storageService";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 // --- Componente do Modal (sem alterações) ---
 const ReportDetailsModal = ({ item, onClose }: { item: DamageReport | null, onClose: () => void }) => {
@@ -127,6 +129,59 @@ const Reports = () => {
         setSortConfig({ key, direction });
     };
 
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(18);
+        doc.text('Relatório de Avarias', 14, 22);
+        doc.setFontSize(10);
+        doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, 32);
+        doc.text(`Total de registros: ${processedData.length}`, 14, 38);
+        
+        const tableData = processedData.map((item) => [
+            item.productName,
+            item.code,
+            item.serialNumber,
+            item.seller,
+            new Date(item.date).toLocaleDateString('pt-BR'),
+            item.discount,
+            item.originalPrice,
+            item.newPrice
+        ]);
+        
+        autoTable(doc, {
+            head: [['Produto', 'SKU', 'N/S', 'Vendedor', 'Data', 'Desconto', 'Preço Original', 'Novo Preço']],
+            body: tableData,
+            startY: 45,
+            styles: {
+                fontSize: 7,
+                cellPadding: 3,
+            },
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [245, 245, 245]
+            },
+            columnStyles: {
+                0: { cellWidth: 40 }, // Produto
+                1: { cellWidth: 20 }, // SKU
+                2: { cellWidth: 25 }, // N/S
+                3: { cellWidth: 25 }, // Vendedor
+                4: { cellWidth: 20 }, // Data
+                5: { cellWidth: 18 }, // Desconto
+                6: { cellWidth: 22 }, // Preço Original
+                7: { cellWidth: 22 }  // Novo Preço
+            },
+            margin: { left: 14, right: 14 }
+        });
+        
+        const fileName = `relatorio-avarias-${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(fileName);
+    };
+
     const handleShowDetails = (item: DamageReport) => { setSelectedItem(item); setIsModalOpen(true); };
     const handleCloseModal = () => { setIsModalOpen(false); setSelectedItem(null); };
     const handleClearFilters = () => { setFilters(initialFilters); setCurrentPage(1); };
@@ -168,7 +223,7 @@ const Reports = () => {
                         <CardDescription>{processedData.length} registros encontrados</CardDescription>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm"><FileText className="w-4 h-4 mr-2" />PDF</Button>
+                        <Button variant="outline" size="sm" onClick={handleExportPDF}><FileText className="w-4 h-4 mr-2" />PDF</Button>
                         <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-2" />Excel</Button>
                     </div>
                 </CardHeader>
