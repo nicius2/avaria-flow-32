@@ -1,14 +1,12 @@
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "react-router-dom"; // Importa o hook para ler a URL
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, Download, FileText, Eye, X, Tag, DollarSign, User, Info, Fingerprint, ArrowUpDown, FilterX, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
-// PASSO 1: Importar o serviço e o tipo
+import { Calendar, Download, FileText, Eye, X, Tag, DollarSign, User, Info, Fingerprint, ArrowUpDown, FilterX, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Search } from "lucide-react";
 import { getDamageReports, DamageReport } from "@/services/storageService";
-
 
 // --- Componente do Modal (sem alterações) ---
 const ReportDetailsModal = ({ item, onClose }: { item: DamageReport | null, onClose: () => void }) => {
@@ -32,8 +30,8 @@ const ReportDetailsModal = ({ item, onClose }: { item: DamageReport | null, onCl
                         <div>
                             <h3 className="font-semibold text-lg mb-2 text-primary">Informações do Registro</h3>
                             <div className="space-y-2 text-sm">
-                                <div className="flex items-center gap-2"><Tag className="w-4 h-4 text-secondary"/> <strong>Código:</strong> {item.code}</div>
-                                <div className="flex items-center gap-2"><Fingerprint className="w-4 h-4 text-secondary"/> <strong>Código de Série:</strong> {item.serialNumber}</div>
+                                <div className="flex items-center gap-2"><Tag className="w-4 h-4 text-secondary"/> <strong>SKU:</strong> {item.code}</div>
+                                <div className="flex items-center gap-2"><Fingerprint className="w-4 h-4 text-secondary"/> <strong>N/S:</strong> {item.serialNumber}</div>
                                 <div className="flex items-center gap-2"><User className="w-4 h-4 text-secondary"/> <strong>Vendedor:</strong> {item.seller}</div>
                                 <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-secondary"/> <strong>Data:</strong> {new Date(item.date).toLocaleDateString('pt-BR')}</div>
                             </div>
@@ -61,33 +59,50 @@ const ReportDetailsModal = ({ item, onClose }: { item: DamageReport | null, onCl
 
 
 const Reports = () => {
-    // PASSO 2: Criar um estado para armazenar os dados que virão do localStorage
     const [reportsData, setReportsData] = useState<DamageReport[]>([]);
-    
     const initialFilters = { searchTerm: "", startDate: "", endDate: "", category: "all" };
     const [filters, setFilters] = useState(initialFilters);
     const [sortConfig, setSortConfig] = useState<{ key: keyof DamageReport; direction: 'asc' | 'desc' } | null>({ key: 'date', direction: 'desc' });
     const [currentPage, setCurrentPage] = useState(1);
-    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState<DamageReport | null>(null);
+    const [searchParams] = useSearchParams();
 
-    const ITEMS_PER_PAGE = 10;
+    const ITEMS_PER_PAGE = 8;
     
-    // PASSO 3: Usar o useEffect para carregar os dados quando o componente montar
     useEffect(() => {
         const data = getDamageReports();
         setReportsData(data);
-    }, []); // O array vazio [] garante que isso rode apenas uma vez
 
-    // Lógica de filtragem, ordenação e paginação otimizada com useMemo
+        const filtroUrl = searchParams.get('filtro');
+        if (filtroUrl) {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            
+            if (filtroUrl === 'hoje') {
+                setFilters(prev => ({ ...prev, startDate: todayStr, endDate: todayStr }));
+            }
+            if (filtroUrl === 'mes') {
+                const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                const firstDayStr = firstDayOfMonth.toISOString().split('T')[0];
+                setFilters(prev => ({ ...prev, startDate: firstDayStr, endDate: todayStr }));
+            }
+        }
+    }, [searchParams]);
+
     const processedData = useMemo(() => {
-        // Agora usamos 'reportsData' (do estado) em vez de 'mockData'
         let filteredItems = reportsData.filter(item => {
-            const searchTermMatch = item.productName.toLowerCase().includes(filters.searchTerm.toLowerCase()) || item.code.toLowerCase().includes(filters.searchTerm.toLowerCase());
+            const searchTermLower = filters.searchTerm.toLowerCase();
+            const searchTermMatch = 
+                item.productName.toLowerCase().includes(searchTermLower) || 
+                item.code.toLowerCase().includes(searchTermLower) ||
+                item.serialNumber.toLowerCase().includes(searchTermLower);
+
             const categoryMatch = filters.category === 'all' || item.category === filters.category;
-            const startDateMatch = !filters.startDate || new Date(item.date) >= new Date(filters.startDate);
-            const endDateMatch = !filters.endDate || new Date(item.date) <= new Date(filters.endDate);
+            
+            const itemDate = item.date.split('T')[0];
+            const startDateMatch = !filters.startDate || itemDate >= filters.startDate;
+            const endDateMatch = !filters.endDate || itemDate <= filters.endDate;
             return searchTermMatch && categoryMatch && startDateMatch && endDateMatch;
         });
 
@@ -99,7 +114,7 @@ const Reports = () => {
             });
         }
         return filteredItems;
-    }, [filters, sortConfig, reportsData]); // Adicionado reportsData às dependências
+    }, [filters, sortConfig, reportsData]);
 
     const totalPages = Math.ceil(processedData.length / ITEMS_PER_PAGE);
     const paginatedData = processedData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
@@ -125,21 +140,23 @@ const Reports = () => {
 
             <Card className="shadow-soft">
                 <CardHeader>
-                    <CardTitle className="text-primary flex items-center gap-2"><Calendar className="w-5 h-5" />Filtros Avançados</CardTitle>
+                    <CardTitle className="text-primary flex items-center gap-2"><Search className="w-5 h-5" />Filtros e Pesquisa</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <Input placeholder="Buscar por produto ou código..." value={filters.searchTerm} onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })} className="md:col-span-2" />
-                        <Select value={filters.category} onValueChange={(value) => setFilters({ ...filters, category: value })}>
-                            <SelectTrigger><SelectValue /></SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">Todas as Categorias</SelectItem>
-                                <SelectItem value="Eletrônicos">Eletrônicos</SelectItem>
-                                <SelectItem value="Eletrodomesticos">Eletrodomésticos</SelectItem>
-                                <SelectItem value="Móveis">Móveis</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Button onClick={handleClearFilters} variant="ghost"><FilterX className="w-4 h-4 mr-2" />Limpar Filtros</Button>
+                <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                        <div className="md:col-span-2 space-y-2">
+                            <label htmlFor="search-term">Buscar por Termo</label>
+                            <Input id="search-term" placeholder="Produto, SKU ou N/S..." value={filters.searchTerm} onChange={(e) => setFilters({ ...filters, searchTerm: e.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                            <label htmlFor="start-date">Data Inicial</label>
+                            <Input id="start-date" type="date" value={filters.startDate} onChange={e => setFilters({...filters, startDate: e.target.value})} />
+                        </div>
+                        <div className="space-y-2">
+                            <label htmlFor="end-date">Data Final</label>
+                            <Input id="end-date" type="date" value={filters.endDate} onChange={e => setFilters({...filters, endDate: e.target.value})} />
+                        </div>
+                        <Button onClick={handleClearFilters} variant="ghost"><FilterX className="w-4 h-4 mr-2" />Limpar</Button>
                     </div>
                 </CardContent>
             </Card>
@@ -171,7 +188,13 @@ const Reports = () => {
                                 {paginatedData.length > 0 ? (
                                     paginatedData.map((item) => (
                                         <TableRow key={item.id}>
-                                            <TableCell className="font-medium">{item.productName}<span className="block text-xs text-muted-foreground">{item.code}</span></TableCell>
+                                            <TableCell className="font-medium">
+                                                {item.productName}
+                                                <div className="text-xs text-muted-foreground flex items-center gap-4 mt-1">
+                                                    <span className="flex items-center gap-1.5"><Tag className="w-3 h-3"/> {item.code}</span>
+                                                    <span className="flex items-center gap-1.5"><Fingerprint className="w-3 h-3"/> {item.serialNumber}</span>
+                                                </div>
+                                            </TableCell>
                                             <TableCell><span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-700 font-medium">{item.discount}</span></TableCell>
                                             <TableCell>{item.seller}</TableCell>
                                             <TableCell>{new Date(item.date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</TableCell>
@@ -186,7 +209,6 @@ const Reports = () => {
                             </TableBody>
                         </Table>
                     </div>
-                    {/* Controles de Paginação */}
                     <div className="flex items-center justify-end space-x-2 py-4">
                         <span className="text-sm text-muted-foreground">Página {currentPage} de {totalPages}</span>
                         <Button variant="outline" size="sm" onClick={() => setCurrentPage(1)} disabled={currentPage === 1}><ChevronsLeft className="h-4 w-4" /></Button>
