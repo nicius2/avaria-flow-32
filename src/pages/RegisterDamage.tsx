@@ -14,7 +14,7 @@ const RegisterDamage = () => {
   const [productCode, setProductCode] = useState("");
   const [foundProduct, setFoundProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const [serialNumber, setSerialNumber] = useState("");
   const [description, setDescription] = useState("");
   const [discount, setDiscount] = useState([10]);
   const [image, setImage] = useState<File | null>(null);
@@ -22,7 +22,6 @@ const RegisterDamage = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Função de busca que agora consulta o storageService
   const handleSearchProduct = () => {
     if (!productCode) {
         toast({ title: "Atenção", description: "Digite um código de produto para buscar.", variant: "default" });
@@ -46,13 +45,18 @@ const RegisterDamage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!foundProduct || !description) {
-      toast({ title: "Erro de Validação", description: "Todos os campos de avaria são obrigatórios.", variant: "destructive" });
+    if (!foundProduct || !description || !serialNumber) {
+      toast({ title: "Erro de Validação", description: "Todos os campos, incluindo o número de série, são obrigatórios.", variant: "destructive" });
       return;
     }
 
+    const originalPrice = foundProduct?.price || 0;
+    const discountPercentage = discount[0] / 100;
+    const discountedPrice = originalPrice * (1 - discountPercentage);
+
     const newReportData = {
         code: foundProduct.id,
+        serialNumber: serialNumber,
         productName: foundProduct.name,
         damage: description,
         discount: `${discount[0]}%`,
@@ -66,6 +70,14 @@ const RegisterDamage = () => {
 
     addDamageReport(newReportData);
     toast({ title: "Sucesso!", description: `Avaria para "${foundProduct.name}" registrada.` });
+    
+    // Resetar o formulário após o envio
+    setProductCode("");
+    setFoundProduct(null);
+    setSerialNumber("");
+    setDescription("");
+    setDiscount([10]);
+    setImage(null);
     
     setTimeout(() => {
         navigate('/relatorios');
@@ -110,18 +122,33 @@ const RegisterDamage = () => {
           <Card className="animate-in fade-in-0 duration-500">
             <CardHeader>
               <CardTitle className="text-primary">2. Detalhar Avaria</CardTitle>
-              <CardDescription>Descreva o dano, anexe uma foto e defina o novo preço.</CardDescription>
+              <CardDescription>Informe o número de série único deste item e descreva o dano.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="p-4 bg-muted/50 rounded-lg">
                   <h3 className="font-semibold">{foundProduct.name}</h3>
-                  <p className="text-sm text-muted-foreground">Categoria: <span className="capitalize">{foundProduct.category}</span></p>
-                  <p className="text-sm text-muted-foreground">Preço Original: <span className="font-medium">R$ {originalPrice.toFixed(2).replace('.',',')}</span></p>
+                  <p className="text-sm text-muted-foreground">SKU: {foundProduct.id}</p>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="serialNumber">Número de Série do Item *</Label>
+                <Input 
+                    id="serialNumber" 
+                    placeholder="Ex: SN-BRX5487A" 
+                    value={serialNumber}
+                    onChange={(e) => setSerialNumber(e.target.value)}
+                    required
+                />
+                <p className="text-xs text-muted-foreground">
+                    Identificador único do item físico (geralmente encontrado na etiqueta do produto).
+                </p>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="description">Descrição da Avaria *</Label>
                 <Textarea id="description" placeholder="Ex: Arranhão profundo na tela, embalagem rasgada..." rows={4} value={description} onChange={(e) => setDescription(e.target.value)} required />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="damage-image">Foto da Avaria</Label>
                  <div className="flex items-center justify-center w-full">
@@ -134,10 +161,12 @@ const RegisterDamage = () => {
                     </label>
                 </div> 
               </div>
+
               <div className="space-y-4">
                 <Label>Percentual de Desconto: {discount[0]}%</Label>
                 <Slider min={0} max={80} step={1} value={discount} onValueChange={setDiscount} />
               </div>
+              
               <div className="p-4 border-t mt-4">
                 <p className="text-sm text-muted-foreground">Preço original: <span className="line-through">R$ {originalPrice.toFixed(2).replace('.',',')}</span></p>
                 <p className="text-2xl font-bold text-green-600">
@@ -159,6 +188,8 @@ const RegisterDamage = () => {
 };
 
 export default RegisterDamage;
+
+
 // import { useState } from "react";
 // import { Button } from "@/components/ui/button";
 // import { Input } from "@/components/ui/input";

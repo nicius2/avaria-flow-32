@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Calendar, Download, FileText, Eye, X, Tag, DollarSign, User, Info, Search, ArrowUpDown, FilterX, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
+import { Calendar, Download, FileText, Eye, X, Tag, DollarSign, User, Info, Fingerprint, ArrowUpDown, FilterX, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight } from "lucide-react";
 // PASSO 1: Importar o serviço e o tipo
 import { getDamageReports, DamageReport } from "@/services/storageService";
 
@@ -33,6 +33,7 @@ const ReportDetailsModal = ({ item, onClose }: { item: DamageReport | null, onCl
                             <h3 className="font-semibold text-lg mb-2 text-primary">Informações do Registro</h3>
                             <div className="space-y-2 text-sm">
                                 <div className="flex items-center gap-2"><Tag className="w-4 h-4 text-secondary"/> <strong>Código:</strong> {item.code}</div>
+                                <div className="flex items-center gap-2"><Fingerprint className="w-4 h-4 text-secondary"/> <strong>Código de Série:</strong> {item.serialNumber}</div>
                                 <div className="flex items-center gap-2"><User className="w-4 h-4 text-secondary"/> <strong>Vendedor:</strong> {item.seller}</div>
                                 <div className="flex items-center gap-2"><Calendar className="w-4 h-4 text-secondary"/> <strong>Data:</strong> {new Date(item.date).toLocaleDateString('pt-BR')}</div>
                             </div>
