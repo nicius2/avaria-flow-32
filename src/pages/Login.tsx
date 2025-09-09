@@ -1,98 +1,93 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
-import logo from "@/assets/logo.png";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
+import logo from "../assets/banner-login.svg"; // Adjust the path to your logo file
 
 const Login = () => {
-  const [credentials, setCredentials] = useState({ username: "", password: "" });
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    
-    // Credenciais de admin predefinidas
-    const validCredentials = [
-      { username: "admin", password: "admin123" },
-      { username: "administrador", password: "123456" },
-      { username: "usuario", password: "senha123" }
-    ];
-    
-    // Verifica se as credenciais são válidas
-    const isValidLogin = validCredentials.some(
-      cred => cred.username === credentials.username && cred.password === credentials.password
-    );
-    
-    if (isValidLogin) {
+
+    // Check for the specific credentials: admin / admin
+    if (credentials.username === 'admin' && credentials.password === 'admin') {
       toast({
-        title: "Login realizado com sucesso!",
-        description: "Redirecionando para o dashboard...",
+        title: "Sucesso!",
+        description: "Login realizado com sucesso. Redirecionando...",
       });
-      navigate("/dashboard");
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000);
     } else {
       toast({
         title: "Credenciais inválidas",
-        description: "Tente: admin/admin123 ou administrador/123456",
+        description: "Tente: admin / admin",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <Card className="w-full max-w-md shadow-medium">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex justify-center">
-            <img src={logo} alt="Sistema de Controle" className="w-20 h-20" />
-          </div>
-          <CardTitle className="text-2xl font-bold text-primary">
-            Controle de Produtos
-          </CardTitle>
-          <CardDescription className="text-muted-foreground">
-            Sistema de Avarias
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Usuário</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Digite seu usuário"
-                value={credentials.username}
-                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                required
-              />
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      {/* Container principal para centralizar e dar bordas arredondadas */}
+      <div className="flex w-full max-w-4xl shadow-2xl rounded-xl overflow-hidden">
+        {/* Left side: Login form */}
+        <div className="flex-1 flex items-center justify-center p-12 bg-white">
+          <div className="w-full max-w-sm space-y-8">
+            <div className="text-left">
+              <h1 className="text-2xl font-semibold text-gray-800">Bem-vindo</h1>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Digite sua senha"
-                value={credentials.password}
-                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                required
-              />
-            </div>
-            <Button type="submit" className="w-full bg-accent hover:bg-accent-hover">
-              Entrar
-            </Button>
-          </form>
-          <div className="mt-4 p-3 bg-muted/50 rounded-md">
-            <p className="text-sm text-muted-foreground text-center">
-              <strong>Credenciais para teste:</strong><br />
-              admin / admin123<br />
-              administrador / 123456
-            </p>
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-gray-700">
+                  Usuário
+                </Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Digite o usuário"
+                  onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                  className="w-full px-4 py-2 border-[0.75px] border-gray-300 rounded-md focus:outline-none focus:ring-0 focus:border-[#ff0100]"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-gray-700">
+                  Senha
+                </Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Digite a Senha"
+                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                  className="w-full px-4 py-2 border-[0.75px] border-gray-300 rounded-md focus:outline-none focus:ring-0 focus:border-[#ff0100]"
+                  required
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-[#ff0000d0] text-white font-bold py-2 rounded-md hover:bg-[#FF0100] transition ease-linear duration-300"
+              >
+                Entrar
+              </Button>
+            </form>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+
+        {/* Right side: Red banner with logo */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8 relative">
+          <img
+            src={logo}
+            alt="Eletro Mateus Logo"
+            className="w-full object-contain p-4"
+          />
+        </div>
+      </div>
     </div>
   );
 };
