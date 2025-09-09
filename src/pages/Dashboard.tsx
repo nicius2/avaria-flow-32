@@ -12,10 +12,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 const ReportsModal = ({ reports, onClose }: { reports: DamageReport[], onClose: () => void }) => {
     const navigate = useNavigate();
 
-    // A CORREÇÃO ESTÁ AQUI
     const goToReports = () => {
-        // Navega para a rota correta '/reports'
-        navigate('/reports');
+        // CORREÇÃO APLICADA AQUI
+        navigate('/dashboard/reports');
     };
 
     return (
@@ -111,18 +110,19 @@ const Dashboard = () => {
         }
     };
 
+    // CORREÇÃO APLICADA AQUI EM TODAS AS ROTAS
     const statsCards = [
     {
-      title: "Produtos Avariados Hoje", value: stats?.damagedToday ?? "...", description: "Novos registos hoje", icon: Package, color: "text-red-500", link: "/reports?filtro=hoje"
+      title: "Produtos Avariados Hoje", value: stats?.damagedToday ?? "...", description: "Novos registos hoje", icon: Package, color: "text-red-500", link: "/dashboard/reports?filtro=hoje"
     },
     {
-      title: "Valor Avariado no Mês", value: stats?.monthlyValue ?? "...", description: "Soma dos preços com desconto", icon: TrendingUp, color: "text-blue-500", link: "/reports?filtro=mes"
+      title: "Valor Avariado no Mês", value: stats?.monthlyValue ?? "...", description: "Soma dos preços com desconto", icon: TrendingUp, color: "text-blue-500", link: "/dashboard/reports?filtro=mes"
     },
     {
-      title: "Avisos Pendentes", value: stats?.pendingWarnings ?? "...", description: "Exemplo de dados estáticos", icon: AlertTriangle, color: "text-yellow-500", link: "/reports"
+      title: "Avisos Pendentes", value: stats?.pendingWarnings ?? "...", description: "Exemplo de dados estáticos", icon: AlertTriangle, color: "text-yellow-500", link: "/dashboard/reports"
     },
     {
-      title: "Total de Registos", value: stats?.totalReports ?? "...", description: "Total no sistema", icon: BarChart3, color: "text-indigo-500", link: "/reports"
+      title: "Total de Registos", value: stats?.totalReports ?? "...", description: "Total no sistema", icon: BarChart3, color: "text-indigo-500", link: "/dashboard/reports"
     }
   ];
 
@@ -188,13 +188,13 @@ const Dashboard = () => {
                   <CardTitle className="text-primary">Ações Rápidas</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
-                  <Link to="/registrar-avaria">
+                  <Link to="/dashboard/register-damage">
                     <Button size="lg" className="w-full h-full flex flex-col items-center justify-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
                       <Plus className="w-6 h-6" />
                       <span className="text-base font-medium">Nova Avaria</span>
                     </Button>
                   </Link>
-                  <Link to="/reports">
+                  <Link to="/dashboard/reports">
                     <Button size="lg" variant="outline" className="w-full h-full flex flex-col items-center justify-center gap-2 border-primary text-primary hover:bg-primary/5">
                       <BarChart3 className="w-6 h-6" />
                       <span className="text-base font-medium">Ver Relatórios</span>
