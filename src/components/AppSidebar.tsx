@@ -1,4 +1,4 @@
-import { BarChart3, FileText, Home, Plus, Settings, LogOut } from "lucide-react";
+import { BarChart3, Home, Plus, Settings, LogOut } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/favicon.svg";
 
 const menuItems = [
   { title: "Dashboard", url: "/dashboard", icon: Home },
@@ -26,12 +26,10 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const currentPath = location.pathname;
 
-  const isActive = (path: string) => currentPath === path;
-  
-  const getNavClass = ({ isActive }: { isActive: boolean }) =>
-    isActive 
-      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
-      : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground";
+  const getNavClass = ({ isActive }) =>
+    isActive
+      ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+      : "text-sidebar-foreground hover:bg-sidebar-hover";
 
   const handleLogout = () => {
     navigate("/");
@@ -62,7 +60,10 @@ export function AppSidebar() {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavClass}>
+                    <NavLink
+                      to={item.url}
+                      className={getNavClass}
+                    >
                       <item.icon className="w-4 h-4" />
                       {!collapsed && <span>{item.title}</span>}
                     </NavLink>
@@ -75,7 +76,7 @@ export function AppSidebar() {
 
         {/* Logout Button */}
         <div className="mt-auto p-4 border-t border-sidebar-border">
-          <SidebarMenuButton onClick={handleLogout} className="w-full text-sidebar-foreground hover:bg-sidebar-accent/50">
+          <SidebarMenuButton onClick={handleLogout} className="w-full text-sidebar-foreground hover:bg-sidebar-hover">
             <LogOut className="w-4 h-4" />
             {!collapsed && <span>Sair</span>}
           </SidebarMenuButton>
