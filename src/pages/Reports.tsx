@@ -7,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Calendar, Download, FileText, Eye, X, Tag, DollarSign, User, Info, Fingerprint, ArrowUpDown, FilterX, ChevronsLeft, ChevronLeft, ChevronRight, ChevronsRight, Search } from "lucide-react";
 import { getDamageReports, DamageReport } from "@/services/storageService";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import * as XLSX from 'xlsx';
 
 // --- Componente do Modal (sem alterações) ---
 const ReportDetailsModal = ({ item, onClose }: { item: DamageReport | null, onClose: () => void }) => {
@@ -127,6 +130,157 @@ const Reports = () => {
         setSortConfig({ key, direction });
     };
 
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(18);
+        doc.text('Relatório de Avarias', 14, 22);
+        doc.setFontSize(10);
+        doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')}`, 14, 32);
+        doc.text(`Total de registros: ${processedData.length}`, 14, 38);
+        
+        const tableData = processedData.map((item) => [
+            item.productName,
+            item.code,
+            item.serialNumber,
+            item.seller,
+            new Date(item.date).toLocaleDateString('pt-BR'),
+            item.discount,
+            item.originalPrice,
+            item.newPrice
+        ]);
+        
+        autoTable(doc, {
+            head: [['Produto', 'SKU', 'N/S', 'Vendedor', 'Data', 'Desconto', 'Preço Original', 'Novo Preço']],
+            body: tableData,
+            startY: 45,
+            styles: {
+                fontSize: 7,
+                cellPadding: 3,
+            },
+            headStyles: {
+                fillColor: [41, 128, 185],
+                textColor: 255,
+                fontStyle: 'bold'
+            },
+            alternateRowStyles: {
+                fillColor: [245, 245, 245]
+            },
+            columnStyles: {
+                0: { cellWidth: 40 }, // Produto
+                1: { cellWidth: 20 }, // SKU
+                2: { cellWidth: 25 }, // N/S
+                3: { cellWidth: 25 }, // Vendedor
+                4: { cellWidth: 20 }, // Data
+                5: { cellWidth: 18 }, // Desconto
+                6: { cellWidth: 22 }, // Preço Original
+                7: { cellWidth: 22 }  // Novo Preço
+            },
+            margin: { left: 14, right: 14 }
+        });
+        
+        const fileName = `relatorio-avarias-${new Date().toISOString().split('T')[0]}.pdf`;
+        doc.save(fileName);
+    };
+
+    const handleExportExcel = () => {
+        const excelData = processedData.map((item, index) => ({
+            '#': index + 1,
+            'Produto': item.productName,
+            'SKU': item.code,
+            'Número de Série': item.serialNumber,
+            'Vendedor': item.seller,
+            'Data': new Date(item.date).toLocaleDateString('pt-BR'),
+            'Categoria': item.category,
+            'Descrição da Avaria': item.damage,
+            'Desconto': item.discount,
+            'Preço Original': item.originalPrice,
+            'Novo Preço': item.newPrice
+        }));
+
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+        const columnWidths = [
+            { wch: 5 },  // #
+            { wch: 35 }, // Produto
+            { wch: 15 }, // SKU
+            { wch: 20 }, // Número de Série
+            { wch: 20 }, // Vendedor
+            { wch: 12 }, // Data
+            { wch: 15 }, // Categoria
+            { wch: 40 }, // Descrição da Avaria
+            { wch: 10 }, // Desconto
+            { wch: 15 }, // Preço Original
+            { wch: 15 }  // Novo Preço
+        ];
+        worksheet['!cols'] = columnWidths;
+
+        const headerInfo = [
+            ['Relatório de Avarias - Avaria Flow'],
+            [`Data de Geração: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`],
+            [`Total de Registros: ${processedData.length}`],
+            ['']
+        ];
+
+        if (filters.searchTerm || filters.startDate || filters.endDate || filters.category !== 'all') {
+            headerInfo.push(['Filtros Aplicados:']);
+            if (filters.searchTerm) {
+                headerInfo.push([`Termo de Busca: ${filters.searchTerm}`]);
+            }
+            if (filters.startDate) {
+                headerInfo.push([`Data Inicial: ${new Date(filters.startDate).toLocaleDateString('pt-BR')}`]);
+            }
+            if (filters.endDate) {
+                headerInfo.push([`Data Final: ${new Date(filters.endDate).toLocaleDateString('pt-BR')}`]);
+            }
+            if (filters.category !== 'all') {
+                headerInfo.push([`Categoria: ${filters.category}`]);
+            }
+            headerInfo.push(['']);
+        }
+
+        const headerWorksheet = XLSX.utils.aoa_to_sheet(headerInfo);
+        
+        XLSX.utils.sheet_add_json(headerWorksheet, excelData, { 
+            origin: `A${headerInfo.length + 1}`,
+            skipHeader: false 
+        });
+
+        XLSX.utils.book_append_sheet(workbook, headerWorksheet, 'Relatório de Avarias');
+
+        if (processedData.length > 0) {
+            const totalOriginalValue = processedData.reduce((sum, item) => {
+                const price = parseFloat(item.originalPrice.replace(/[R$.\s]/g, '').replace(',', '.'));
+                return sum + (isNaN(price) ? 0 : price);
+            }, 0);
+
+            const totalNewValue = processedData.reduce((sum, item) => {
+                const price = parseFloat(item.newPrice.replace(/[R$.\s]/g, '').replace(',', '.'));
+                return sum + (isNaN(price) ? 0 : price);
+            }, 0);
+
+            const totalDiscount = totalOriginalValue - totalNewValue;
+
+            const summaryData = [
+                ['Resumo Estatístico'],
+                [''],
+                ['Métrica', 'Valor'],
+                ['Valor Original Total', totalOriginalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })],
+                ['Valor com Desconto Total', totalNewValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })],
+                ['Total de Desconto Aplicado', totalDiscount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })],
+                ['Total de Itens', processedData.length]
+            ];
+
+            const summaryWorksheet = XLSX.utils.aoa_to_sheet(summaryData);
+            summaryWorksheet['!cols'] = [{ wch: 25 }, { wch: 20 }];
+            XLSX.utils.book_append_sheet(workbook, summaryWorksheet, 'Resumo');
+        }
+
+        const fileName = `relatorio-avarias-${new Date().toISOString().split('T')[0]}.xlsx`;
+        XLSX.writeFile(workbook, fileName);
+    };
+
     const handleShowDetails = (item: DamageReport) => { setSelectedItem(item); setIsModalOpen(true); };
     const handleCloseModal = () => { setIsModalOpen(false); setSelectedItem(null); };
     const handleClearFilters = () => { setFilters(initialFilters); setCurrentPage(1); };
@@ -168,8 +322,8 @@ const Reports = () => {
                         <CardDescription>{processedData.length} registros encontrados</CardDescription>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm"><FileText className="w-4 h-4 mr-2" />PDF</Button>
-                        <Button variant="outline" size="sm"><Download className="w-4 h-4 mr-2" />Excel</Button>
+                        <Button variant="outline" size="sm" onClick={handleExportPDF}><FileText className="w-4 h-4 mr-2" />PDF</Button>
+                        <Button variant="outline" size="sm" onClick={handleExportExcel}><Download className="w-4 h-4 mr-2" />Excel</Button>
                     </div>
                 </CardHeader>
                 <CardContent>
