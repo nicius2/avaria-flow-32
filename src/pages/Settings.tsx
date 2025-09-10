@@ -213,8 +213,8 @@ const Settings = () => {
                 <nav className="md:col-span-1 lg:col-span-1 flex flex-col space-y-2">
                     <button onClick={() => setActiveTab('profile')} className={getTabClassName('profile')}>Perfil</button>
                     <button onClick={() => setActiveTab('notifications')} className={getTabClassName('notifications')}>Notificações</button>
-                    <button onClick={() => setActiveTab('system')} className={getTabClassName('system')}>Sistema</button>
-                    <button onClick={() => setActiveTab('security')} className={getTabClassName('security')}>Segurança</button>
+
+                   
                 </nav>
                 <div className="md:col-span-3 lg:col-span-4">
                     <Card className="shadow-soft">
