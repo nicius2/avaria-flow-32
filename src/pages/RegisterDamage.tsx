@@ -157,14 +157,14 @@ const RegisterDamage = () => {
                             <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
                             <p className="mb-2 text-sm text-muted-foreground">{image ? `Arquivo: ${image.name}` : <><span className="font-semibold">Clique para enviar</span> ou arraste e solte</>}</p>
                         </div>
-                        <input id="dropzone-file" type="file" className="hidden" onChange={(e) => e.target.files && setImage(e.target.files[0])}/>
+                        <input id="dropzone-file" type="file" className="hidden" accept="image/*" onChange={(e) => e.target.files && setImage(e.target.files[0])}/>
                     </label>
                 </div> 
               </div>
 
               <div className="space-y-4">
                 <Label>Percentual de Desconto: {discount[0]}%</Label>
-                <Slider min={0} max={80} step={1} value={discount} onValueChange={setDiscount} />
+                <Slider min={0} max={50} step={1} value={discount} onValueChange={setDiscount} />
               </div>
               
               <div className="p-4 border-t mt-4">
