@@ -187,7 +187,7 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent className="grid grid-cols-2 gap-4">
                   <Link to="/dashboard/register-damage">
-                    <Button size="lg" className="w-full h-full flex flex-col items-center justify-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
+                    <Button size="lg" className="w-full h-full p-3 flex items-center justify-center gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground">
                       <Plus className="w-6 h-6" />
                       <span className="text-base font-medium">Nova Avaria</span>
                     </Button>
@@ -197,7 +197,7 @@ const Dashboard = () => {
                     <Button 
                         size="lg" 
                         variant="outline" 
-                        className="w-full h-full flex flex-col items-center justify-center gap-2 border-primary text-primary hover:bg-primary/10 transition-colors duration-200"
+                        className="w-full h-full flex p-3 items-center justify-center gap-2 border-primary text-primary hover:bg-primary/10 transition-colors duration-200"
                     >
                       <BarChart3 className="w-6 h-6" />
                       <span className="text-base font-medium">Ver Relatórios</span>
