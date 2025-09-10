@@ -63,13 +63,13 @@
     --warning-foreground: 0 0% 100%;
 
     /* Sidebar System */
-    --sidebar-background: 0 80% 50%;
+    --sidebar-background: 240 81% 31%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 0 0% 0%;
     --sidebar-primary-foreground: 240 81% 31%;
     --sidebar-accent: 4 90% 58%;
     /* Updated to a red accent */
-    --sidebar-border: 0 80% 50%;
+    --sidebar-border: 240 81% 31%;
     --sidebar-ring: 207 90% 54%;
     --sidebar-hover: 4 80% 50%;
     /* Updated to a red hover color */
