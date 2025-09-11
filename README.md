@@ -1,73 +1,40 @@
-# Welcome to your Lovable project
+🚀 Visão Geral do Projeto
+Este projeto é uma aplicação web moderna e eficiente, desenvolvida para gerenciar a venda e o estoque de produtos com avarias do Eletro Mateus. O foco do desenvolvimento foi em otimizar o controle e a transparência do inventário, utilizando um conjunto de tecnologias robusto e atual para garantir um produto de alta qualidade.
 
-## Project info
+💻 Stack Tecnológica
+O projeto foi construído sobre uma base sólida, combinando ferramentas de ponta para otimizar o fluxo de trabalho do desenvolvedor e a performance da aplicação.
 
-**URL**: https://lovable.dev/projects/d632bda4-f14e-47fe-b6e9-61be0d8cf360
+Vite: Um bundler de alta performance que garante um ambiente de desenvolvimento rápido e eficiente.
 
-## How can I edit this code?
+TypeScript: Uma camada de tipagem estática que eleva a robustez e a manutenção do código.
 
-There are several ways of editing your application.
+React: A biblioteca de UI mais popular, usada para a construção de interfaces de usuário dinâmicas e reativas.
 
-**Use Lovable**
+shadcn-ui: Um conjunto de componentes reutilizáveis, construídos com acessibilidade em mente, para acelerar o desenvolvimento da interface.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/d632bda4-f14e-47fe-b6e9-61be0d8cf360) and start prompting.
+Tailwind CSS: Um framework CSS utilitário que permite a estilização rápida e flexível, mantendo o código conciso e legível.
 
-Changes made via Lovable will be committed automatically to this repo.
+⚙️ Como Contribuir para o Desenvolvimento
+Para clonar e iniciar o projeto localmente, siga estes passos simples. É necessário ter o Node.js e o npm instalados (recomendamos usar o nvm para gerenciar as versões).
 
-**Use your preferred IDE**
+Clone o Repositório:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Bash
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
 git clone <YOUR_GIT_URL>
+Acesse a Pasta do Projeto:
 
-# Step 2: Navigate to the project directory.
+Bash
+
 cd <YOUR_PROJECT_NAME>
+Instale as Dependências:
 
-# Step 3: Install the necessary dependencies.
-npm i
+Bash
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
+Inicie o Servidor de Desenvolvimento:
+
+Bash
+
 npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/d632bda4-f14e-47fe-b6e9-61be0d8cf360) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+O servidor será iniciado, e a aplicação estará disponível em http://localhost:5173 (ou em outra porta disponível).
